@@ -9,7 +9,7 @@ import path from 'path';
 import log from '../log';
 import sendTo from '../sendTo';
 import * as TerminalLink from './utils/TerminalLink';
-import { formatNamedWarning } from './utils/logConfigWarnings';
+import { formatNamedWarning, logBareWorkflowWarnings } from './utils/logConfigWarnings';
 
 type Options = {
   clear?: boolean;
@@ -63,9 +63,15 @@ export async function action(
 
   logOptimizeWarnings({ projectRoot: projectDir });
 
+  if (!options.target && target === 'bare') {
+    logBareWorkflowWarnings(pkg, 'publish');
+  }
+
   log.addNewLineIfNone();
 
   // Build and publish the project.
+
+  log(`Building optimized bundles and generating sourcemaps...`);
 
   if (options.quiet) {
     simpleSpinner.start();
@@ -74,7 +80,7 @@ export async function action(
   const result = await Project.publishAsync(projectDir, {
     releaseChannel: options.releaseChannel,
     quiet: options.quiet,
-    target: options.target,
+    target,
     resetCache: options.clear,
   });
 
@@ -107,6 +113,8 @@ export async function action(
       await sendTo.sendUrlAsync(websiteUrl, recipient);
     }
   }
+
+  log.newLine();
 
   return result;
 }
