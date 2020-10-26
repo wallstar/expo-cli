@@ -173,21 +173,23 @@ export function getMainActivity(manifest: Document): ManifestActivity | null {
 export function addMetaDataItemToMainApplication(
   mainApplication: any,
   itemName: string,
-  itemValue: string
+  itemValue: string,
+  itemType: 'resource' | 'value' = 'value'
 ): ManifestApplication {
   let existingMetaDataItem;
   const newItem = {
     $: {
       'android:name': itemName,
-      'android:value': itemValue,
+      ['android:' + itemType]: itemValue,
     },
   };
+
   if (mainApplication.hasOwnProperty('meta-data')) {
     existingMetaDataItem = mainApplication['meta-data'].filter(
       (e: any) => e['$']['android:name'] === itemName
     );
     if (existingMetaDataItem.length) {
-      existingMetaDataItem[0]['$']['android:value'] = itemValue;
+      existingMetaDataItem[0]['$'][`android:${itemType}`] = itemValue;
     } else {
       mainApplication['meta-data'].push(newItem);
     }
