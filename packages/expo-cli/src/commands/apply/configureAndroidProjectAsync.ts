@@ -80,7 +80,6 @@ export default async function configureAndroidProjectAsync(projectRoot: string) 
       exp,
       androidManifest
     );
-
     androidManifest = await AndroidConfig.GoogleMobileAds.setGoogleMobileAdsConfig(
       exp,
       androidManifest
@@ -89,8 +88,11 @@ export default async function configureAndroidProjectAsync(projectRoot: string) 
       exp,
       androidManifest
     );
-
     androidManifest = await AndroidConfig.IntentFilters.setAndroidIntentFilters(
+      exp,
+      androidManifest
+    );
+    androidManifest = await AndroidConfig.Notifications.applyAndroidManifestChanges(
       exp,
       androidManifest
     );
@@ -123,6 +125,7 @@ export default async function configureAndroidProjectAsync(projectRoot: string) 
   await AndroidConfig.NavigationBar.setNavigationBarConfig(exp, projectRoot);
   await AndroidConfig.StatusBar.setStatusBarConfig(exp, projectRoot);
   await AndroidConfig.PrimaryColor.setPrimaryColor(exp, projectRoot);
+  await AndroidConfig.Notifications.applyColorsXmlChangesAsync(exp, projectRoot);
 
   // Modify strings.xml
   await AndroidConfig.Facebook.setFacebookAppIdString(exp, projectRoot);
@@ -131,7 +134,10 @@ export default async function configureAndroidProjectAsync(projectRoot: string) 
   // add google-services.json to project
   await AndroidConfig.GoogleServices.setGoogleServicesFile(exp, projectRoot);
 
+  // Modify resources
+  await AndroidConfig.Icon.setIconAsync(exp, projectRoot);
+  await AndroidConfig.Notifications.setNotificationIconAsync(exp, projectRoot);
+
   // TODOs
   await AndroidConfig.SplashScreen.setSplashScreenAsync(exp, projectRoot);
-  await AndroidConfig.Icon.setIconAsync(exp, projectRoot);
 }
